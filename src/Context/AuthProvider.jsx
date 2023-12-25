@@ -1,23 +1,61 @@
 /* eslint-disable react/prop-types */
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { auth } from "../firebase/firebase.config";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 
 export const AuthContext = createContext(null)
 const AuthProvider = ({children}) => {
+
     const [user, setUser] = useState(null)
     const [loading, setLoading]=useState(true)
       
 
     const createUser =(email,password)=>{
         setLoading(true)
-        return createBrowserRouter(auth,email,password)
+        return createUserWithEmailAndPassword(auth,email,password)
     }
+
+    const signInUser =(email,password)=>{
+        setLoading(true)
+        return signInWithEmailAndPassword(auth,email,password)
+    }
+
+    const logOut =()=>{
+        setLoading(true)
+        return signOut(auth)
+    }
+
+
+
+
+    const updateUserProfile = (name) => {
+        return updateProfile(auth.currentUser, {
+            displayName: name,
+        });
+    }
+
+
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, currentUser => {
+            setUser(currentUser)
+            console.log(currentUser);
+             setLoading(false)
+        })
+        return () => {
+            unsubscribe()
+        }
+    }, [])
+
 
    const userInfo ={
     loading,
     user,
-    createUser
+    updateUserProfile,
+    createUser,
+    signInUser,
+    logOut
    }
 
     return (

@@ -1,18 +1,27 @@
 /* eslint-disable no-unused-vars */
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import AuthProvider, { AuthContext } from "../Context/AuthProvider";
+import toast from "react-hot-toast";
 
 const Registration = () => {
+    const { createUser,updateUserProfile} =useContext(AuthContext)
     const { register, handleSubmit,  formState: { errors } } = useForm();
+    
     const onSubmit =async(data) => {
         console.log(data)
+        
+        createUser(data.email, data.password)
+        .then(result=>{
+            const loggedUser= result.user;
+            updateUserProfile(data.name)
+            .then(()=>{
+                toast.success('Successfully User created!');
+            })
+            console.log(loggedUser);
+        })
      
-    
- 
- 
-       
-            
-                
-     };
+    };
     return (
         <div className="hero min-h-screen bg-base-200">
   <div className="hero-content flex-col ">
