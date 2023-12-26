@@ -1,15 +1,20 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthProvider";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 
 const Login = () => {
+    const navigate = useNavigate()
+    const location = useLocation()
     const {signInUser} =useContext(AuthContext)
     const { register, handleSubmit,  formState: { errors } } = useForm();
+
+
+    console.log("login state",location.state.from.pathname)
 
     const onSubmit =async(data) => {
         console.log(data)
@@ -17,6 +22,7 @@ const Login = () => {
         signInUser(data.email, data.password)
         .then(result=>{
             const user= result.user;
+            navigate(location.state.from.pathname)
             toast.success("Logged in")
             console.log(user);
         })
